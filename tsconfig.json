@@ -18,10 +18,11 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".", // ✅ Enables non-relative imports
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"] // ✅ Maps `@/` to your `src` folder
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/register"],
   "exclude": ["node_modules"]
 }

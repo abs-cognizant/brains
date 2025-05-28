@@ -1,7 +1,6 @@
 import { JLHeaderComponent, Carousel } from "@/components";
 import { slide1, slide2, slide3 } from "@/assets/images";
 
-
 const slides = [
     slide1.src,
     slide2.src,
@@ -24,5 +23,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-
