@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
+import Image from 'next/image';
 
 interface EmblaCarouselProps {
   slides: string[]; // Array of image URLs
@@ -31,7 +32,7 @@ const Carousel: React.FC<EmblaCarouselProps> = ({ slides }) => {
       <div className="flex">
         {slides.map((src, index) => (
           <div className="flex-[0_0_100%] px-2" key={index}>
-            <img
+            <Image
               src={src}
               alt={`Slide ${index + 1}`}
               className="w-full h-auto object-cover rounded-lg"

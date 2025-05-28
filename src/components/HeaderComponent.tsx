@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation'; // ✅ correct in App Router
+//import { useRouter } from 'next/navigation'; // ✅ correct in App Router
 import Link from "next/link";
 import { useState } from 'react';
 //import { Link } from 'react-router-dom'; // Assuming you're using React Router
@@ -11,6 +11,7 @@ import { User } from 'lucide-react';
 import { Search } from 'lucide-react';
 import { Menu } from 'lucide-react'; // For mobile navigation
 import logo from "@/assets/logo.png";
+import Image from 'next/image';
 
 const HeaderComponent = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -29,7 +30,7 @@ const HeaderComponent = () => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="text-xl font-bold text-gray-800">
-            <img className="h-8" src={logo.src} />
+            <Image className="h-8" src={logo.src} alt=""/>
         </Link>
 
         {/* Desktop Navigation */}
