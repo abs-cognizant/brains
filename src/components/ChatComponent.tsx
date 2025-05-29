@@ -63,15 +63,141 @@ function ChatComponent() {
     streamChatResponse(userMessage.message, botMessage.id);
   };
 
-  const streamChatResponse = async (userInput: string, botMessageId: number) => {
+  // const streamChatResponse = async (userInput: string, botMessageId: number) => {
+  //   setIsStreaming(true);
+
+  //   const response = await fetch("/api/chat", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ prompt: userInput }),
+  //   });
+
+  //   if (!response.body) {
+  //     console.error("No response body from API.");
+  //     setIsStreaming(false);
+  //     return;
+  //   }
+
+  //   const reader = response.body.getReader();
+  //   const decoder = new TextDecoder("utf-8");
+  //   let done = false;
+  //   let accumulatedText = "";
+
+  //   while (!done) {
+  //     const { value, done: readerDone } = await reader.read();
+  //     if (value) {
+  //       const chunk = decoder.decode(value, { stream: true });
+  //       accumulatedText += chunk;
+
+  //       // Update the bot's message progressively
+  //       setMessages((prevMessages) =>
+  //         prevMessages.map((msg) =>
+  //           msg.id === botMessageId
+  //             ? { ...msg, message: accumulatedText }
+  //             : msg
+  //         )
+  //       );
+  //     }
+  //     done = readerDone;
+  //   }
+
+  //   setIsStreaming(false);
+  // };
+
+  // const streamChatResponse = async (
+  //   userInput: string,
+  //   botMessageId: number
+  // ) => {
+  //   setIsStreaming(true);
+
+  //   const response = await fetch("/api/chat", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       messages: [
+  //         { role: "system", content: "You are a helpful assistant." },
+  //         ...messages.map((m) => ({
+  //           role: m.sender === "user" ? "user" : "assistant",
+  //           content: m.message,
+  //         })),
+  //         { role: "user", content: userInput },
+  //       ],
+  //     }),
+  //   });
+
+  //   if (!response.body) {
+  //     console.error("No response body from API.");
+  //     setIsStreaming(false);
+  //     return;
+  //   }
+
+  //   const reader = response.body.getReader();
+  //   const decoder = new TextDecoder("utf-8");
+  //   let done = false;
+  //   let fullMessage = "";
+
+  //   while (!done) {
+  //     const { value, done: doneReading } = await reader.read();
+  //     done = doneReading;
+  //     const chunk = decoder.decode(value);
+
+  //     const lines = chunk
+  //       .split("\n")
+  //       .filter((line) => line.trim().startsWith("data:"));
+
+  //     for (const line of lines) {
+  //       const messageData = line.replace(/^data:\s*/, "");
+  //       if (messageData === "[DONE]") {
+  //         done = true;
+  //         break;
+  //       }
+
+  //       try {
+  //         const parsed = JSON.parse(messageData);
+  //         const token = parsed.choices?.[0]?.delta?.content || "";
+  //         fullMessage += token;
+
+  //         setMessages((prevMessages) =>
+  //           prevMessages.map((msg) =>
+  //             msg.id === botMessageId ? { ...msg, message: fullMessage } : msg
+  //           )
+  //         );
+  //       } catch (err) {
+  //         console.error("Error parsing message chunk:", err);
+  //       }
+  //     }
+  //   }
+
+  //   setIsStreaming(false);
+  // };
+
+  const streamChatResponse = async (
+    userInput: string,
+    botMessageId: number
+  ) => {
     setIsStreaming(true);
 
-    const response = await fetch("/api/chat", {
+    const response = await fetch("http://localhost:11434/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt: userInput }),
+      body: JSON.stringify({
+        model: "mistral",
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          ...messages.map((m) => ({
+            role: m.sender === "user" ? "user" : "assistant",
+            content: m.message,
+          })),
+          { role: "user", content: userInput },
+        ],
+        stream: true,
+      }),
     });
 
     if (!response.body) {
@@ -83,24 +209,42 @@ function ChatComponent() {
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let done = false;
-    let accumulatedText = "";
+    let fullMessage = "";
 
     while (!done) {
       const { value, done: readerDone } = await reader.read();
-      if (value) {
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedText += chunk;
-
-        // Update the bot's message progressively
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.id === botMessageId
-              ? { ...msg, message: accumulatedText }
-              : msg
-          )
-        );
-      }
       done = readerDone;
+
+      const chunk = decoder.decode(value, { stream: true });
+      console.log("Raw chunk:", chunk);
+      const lines = chunk
+        .split("\n")
+        .filter((line) => line.trim().startsWith("data:"));
+
+      for (const line of lines) {
+        const messageData = line.replace(/^data:\s*/, "");
+        if (messageData === "[DONE]") {
+          done = true;
+          break;
+        }
+
+        try {
+          const parsed = JSON.parse(messageData);
+          const token = parsed.message?.content || "";
+          console.log("Streaming token:", token);
+
+          fullMessage += token;
+
+          setMessages((prevMessages) => {
+            const updatedMessages = prevMessages.map((msg) =>
+              msg.id === botMessageId ? { ...msg, message: fullMessage } : msg
+            );
+            return [...updatedMessages]; // trigger a re-render
+          });
+        } catch (err) {
+          console.error("Error parsing Ollama chunk:", err);
+        }
+      }
     }
 
     setIsStreaming(false);
@@ -144,7 +288,9 @@ function ChatComponent() {
                 handleSendMessage();
               }
             }}
-            placeholder={isStreaming ? "Waiting for response..." : "Type your message..."}
+            placeholder={
+              isStreaming ? "Waiting for response..." : "Type your message..."
+            }
             disabled={isStreaming}
             className="w-full"
           />
