@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Brains &#x1F9E0;",
+  title: "Brains 🧠;",
   description: "NeuroAI based on a network of AI agents",
 };
 
