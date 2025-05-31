@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Brains 🧠",
   description: "NeuroAI based on a network of AI agents",
+  icons: {
+    icon: '/favicon.png', // Path to your PNG icon in the /public directory
+  },
 };
 
 export default function RootLayout({

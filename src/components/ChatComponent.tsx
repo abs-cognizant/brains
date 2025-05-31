@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { getThreadId, setThreadId } from "@/utils/thread";
+import { useState, useEffect, useRef } from "react";
+import { AIMessageChunk } from "@/types/messages";
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -13,19 +15,8 @@ import {
 import { PaperclipIcon, SmileIcon } from "lucide-react";
 
 function ChatComponent() {
-  const actionIcons = [
-    {
-      icon: PaperclipIcon,
-      label: "Attach",
-      onClick: () => alert("Attach clicked"),
-    },
-    {
-      icon: SmileIcon,
-      label: "Emoji",
-      onClick: () => alert("Emoji clicked"),
-    },
-  ];
-
+  const threadIdRef = useRef<string | null>(null);
+  const [threadInitialized, setThreadInitialized] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -41,6 +32,45 @@ function ChatComponent() {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+
+  useEffect(() => {
+    const initThread = async () => {
+      let existingThreadId = getThreadId();
+
+      if (!existingThreadId || existingThreadId === "undefined") {
+        try {
+          const res = await fetch("/api/create-new-thread", { method: "POST" });
+          const data = await res.json();
+          existingThreadId = data.thread_id;
+          setThreadId(existingThreadId as string);
+          console.log("Thread created and stored:", existingThreadId);
+        } catch (error) {
+          console.error("Failed to create thread:", error);
+          return;
+        }
+      } else {
+        console.log("Thread already exists:", existingThreadId);
+      }
+
+      threadIdRef.current = existingThreadId;
+      setThreadInitialized(true);
+    };
+
+    initThread();
+  }, []);
+
+  const actionIcons = [
+    {
+      icon: PaperclipIcon,
+      label: "Attach",
+      onClick: () => alert("Attach clicked"),
+    },
+    {
+      icon: SmileIcon,
+      label: "Emoji",
+      onClick: () => alert("Emoji clicked"),
+    },
+  ];
 
   const handleSendMessage = () => {
     if (inputValue.trim() === "") return;
@@ -63,141 +93,23 @@ function ChatComponent() {
     streamChatResponse(userMessage.message, botMessage.id);
   };
 
-  // const streamChatResponse = async (userInput: string, botMessageId: number) => {
-  //   setIsStreaming(true);
-
-  //   const response = await fetch("/api/chat", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ prompt: userInput }),
-  //   });
-
-  //   if (!response.body) {
-  //     console.error("No response body from API.");
-  //     setIsStreaming(false);
-  //     return;
-  //   }
-
-  //   const reader = response.body.getReader();
-  //   const decoder = new TextDecoder("utf-8");
-  //   let done = false;
-  //   let accumulatedText = "";
-
-  //   while (!done) {
-  //     const { value, done: readerDone } = await reader.read();
-  //     if (value) {
-  //       const chunk = decoder.decode(value, { stream: true });
-  //       accumulatedText += chunk;
-
-  //       // Update the bot's message progressively
-  //       setMessages((prevMessages) =>
-  //         prevMessages.map((msg) =>
-  //           msg.id === botMessageId
-  //             ? { ...msg, message: accumulatedText }
-  //             : msg
-  //         )
-  //       );
-  //     }
-  //     done = readerDone;
-  //   }
-
-  //   setIsStreaming(false);
-  // };
-
-  // const streamChatResponse = async (
-  //   userInput: string,
-  //   botMessageId: number
-  // ) => {
-  //   setIsStreaming(true);
-
-  //   const response = await fetch("/api/chat", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       messages: [
-  //         { role: "system", content: "You are a helpful assistant." },
-  //         ...messages.map((m) => ({
-  //           role: m.sender === "user" ? "user" : "assistant",
-  //           content: m.message,
-  //         })),
-  //         { role: "user", content: userInput },
-  //       ],
-  //     }),
-  //   });
-
-  //   if (!response.body) {
-  //     console.error("No response body from API.");
-  //     setIsStreaming(false);
-  //     return;
-  //   }
-
-  //   const reader = response.body.getReader();
-  //   const decoder = new TextDecoder("utf-8");
-  //   let done = false;
-  //   let fullMessage = "";
-
-  //   while (!done) {
-  //     const { value, done: doneReading } = await reader.read();
-  //     done = doneReading;
-  //     const chunk = decoder.decode(value);
-
-  //     const lines = chunk
-  //       .split("\n")
-  //       .filter((line) => line.trim().startsWith("data:"));
-
-  //     for (const line of lines) {
-  //       const messageData = line.replace(/^data:\s*/, "");
-  //       if (messageData === "[DONE]") {
-  //         done = true;
-  //         break;
-  //       }
-
-  //       try {
-  //         const parsed = JSON.parse(messageData);
-  //         const token = parsed.choices?.[0]?.delta?.content || "";
-  //         fullMessage += token;
-
-  //         setMessages((prevMessages) =>
-  //           prevMessages.map((msg) =>
-  //             msg.id === botMessageId ? { ...msg, message: fullMessage } : msg
-  //           )
-  //         );
-  //       } catch (err) {
-  //         console.error("Error parsing message chunk:", err);
-  //       }
-  //     }
-  //   }
-
-  //   setIsStreaming(false);
-  // };
-
   const streamChatResponse = async (
     userInput: string,
     botMessageId: number
   ) => {
     setIsStreaming(true);
+    const threadId = threadIdRef.current;
 
-    const response = await fetch("http://localhost:11434/api/chat", {
+    if (!threadId) {
+      console.error("Thread ID not available.");
+      setIsStreaming(false);
+      return;
+    }
+
+    const response = await fetch("/api/chat-with-agent", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "mistral",
-        messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          ...messages.map((m) => ({
-            role: m.sender === "user" ? "user" : "assistant",
-            content: m.message,
-          })),
-          { role: "user", content: userInput },
-        ],
-        stream: true,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: userInput, thread_id: threadId }),
     });
 
     if (!response.body) {
@@ -205,7 +117,6 @@ function ChatComponent() {
       setIsStreaming(false);
       return;
     }
-
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let done = false;
@@ -216,11 +127,9 @@ function ChatComponent() {
       done = readerDone;
 
       const chunk = decoder.decode(value, { stream: true });
-      console.log("Raw chunk:", chunk);
       const lines = chunk
         .split("\n")
         .filter((line) => line.trim().startsWith("data:"));
-
       for (const line of lines) {
         const messageData = line.replace(/^data:\s*/, "");
         if (messageData === "[DONE]") {
@@ -229,20 +138,27 @@ function ChatComponent() {
         }
 
         try {
-          const parsed = JSON.parse(messageData);
-          const token = parsed.message?.content || "";
-          console.log("Streaming token:", token);
+          const parsedRaw = JSON.parse(messageData);
+          const parsedArray = Array.isArray(parsedRaw) ? parsedRaw : [parsedRaw];
 
+          const contentChunk = parsedArray.find(
+            (chunk: AIMessageChunk) => chunk.type === "AIMessageChunk"
+          );
+
+          const token = contentChunk?.content || "";
+
+          // Accumulate the full message
           fullMessage += token;
+          console.log("fullMessage", fullMessage);
 
-          setMessages((prevMessages) => {
-            const updatedMessages = prevMessages.map((msg) =>
+          // Update the UI with the new message content
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
               msg.id === botMessageId ? { ...msg, message: fullMessage } : msg
-            );
-            return [...updatedMessages]; // trigger a re-render
-          });
+            )
+          );
         } catch (err) {
-          console.error("Error parsing Ollama chunk:", err);
+          console.error("Streaming parse error:", err);
         }
       }
     }
@@ -268,7 +184,7 @@ function ChatComponent() {
                       icon={<Icon className="size-4" />}
                       onClick={() =>
                         console.log(
-                          "Action " + label + " clicked for message " + index
+                          `Action ${label} clicked for message ${index}`
                         )
                       }
                     />
@@ -283,7 +199,12 @@ function ChatComponent() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !isStreaming) {
+              if (
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                !isStreaming &&
+                threadInitialized
+              ) {
                 e.preventDefault();
                 handleSendMessage();
               }

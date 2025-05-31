@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Menu, Search, User, Heart, ShoppingBasket } from "lucide-react";
-import logo from "@/assets/johnlewislogo.svg";
+import logo from "@/assets/logo_ie.png";
 import Image from 'next/image';
 
 const categories = [
@@ -112,7 +112,7 @@ export default function JLHeaderComponent() {
             <Menu className="w-6 h-6" />
           </Button>
           <Link href="/" className="text-xl font-bold">
-            <Image className="h-8" src={logo} alt=""/>
+            <Image className="h-auto w-8" src={logo} alt=""/>
           </Link>
         </div>
 
