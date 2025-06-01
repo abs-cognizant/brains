@@ -44,7 +44,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t text-center py-4 text-xs text-gray-500">
-        &copy; {new Date().getFullYear()} YourBrandName. All rights reserved.
+        &copy; {new Date().getFullYear()} Cognizant All rights reserved.
       </div>
     </footer>
   );
