@@ -1,10 +1,15 @@
-import { HeaderComponent, LoginComponent } from "@/components";
+import { HeaderComponent, LoginComponent, FooterComponent } from "@/components";
 
 function LoginPage() {
   return (
     <>
       <HeaderComponent />
-      <LoginComponent />
+
+      <main>
+        <LoginComponent />
+      </main>
+      
+      <FooterComponent />
     </>
   );
 }

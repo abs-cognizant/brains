@@ -2,5 +2,6 @@
 export interface AIMessageChunk {
   type?: string;
   content?: string;
-  [key: string]: any;
+  role?: string;
+  //[key: string]: any;
 }

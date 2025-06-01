@@ -71,9 +71,9 @@ export default function JLHeaderComponent() {
           <Link href="/" className="hover:underline">
             About Us
           </Link>
-          <Link href="/" className="hover:underline">
+          {/* <Link href="/" className="hover:underline">
             John Lewis Brands
-          </Link>
+          </Link> */}
           <Link href="/" className="hover:underline">
             Brand A-Z
           </Link>
@@ -89,9 +89,9 @@ export default function JLHeaderComponent() {
           <Link href="/" className="hover:underline">
             Track order
           </Link>
-          <Link href="/" className="hover:underline">
+          {/* <Link href="/" className="hover:underline">
             My John Lewis
-          </Link>
+          </Link> */}
           <Link href="/" className="hover:underline">
             Partnership Credit Card
           </Link>
@@ -112,7 +112,7 @@ export default function JLHeaderComponent() {
             <Menu className="w-6 h-6" />
           </Button>
           <Link href="/" className="text-xl font-bold">
-            <Image className="h-auto w-8" src={logo} alt=""/>
+            <Image className="h-auto w-[12rem]" src={logo} alt=""/>
           </Link>
         </div>
 

@@ -7,7 +7,7 @@ interface EmblaCarouselProps {
   slides: string[]; // Array of image URLs
 }
 
-const Carousel: React.FC<EmblaCarouselProps> = ({ slides }) => {
+const CarouselComponent: React.FC<EmblaCarouselProps> = ({ slides }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -58,4 +58,4 @@ const Carousel: React.FC<EmblaCarouselProps> = ({ slides }) => {
   );
 };
 
-export default Carousel;
+export default CarouselComponent;

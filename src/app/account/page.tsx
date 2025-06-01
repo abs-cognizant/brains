@@ -1,12 +1,10 @@
-import { HeaderComponent, ChatComponent } from "@/components";
+import { JLHeaderComponent, AccountComponent } from "@/components";
 
-function AccountPage() {
+export default function ContactUs() {
     return(
         <>
-            <HeaderComponent />
-            <ChatComponent />
+        <JLHeaderComponent />
+        <AccountComponent />
         </>
     )
 }
-
-export default AccountPage;

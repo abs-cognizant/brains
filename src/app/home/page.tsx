@@ -1,4 +1,4 @@
-import { JLHeaderComponent, Carousel } from "@/components";
+import { JLHeaderComponent, CarouselComponent } from "@/components";
 import { slide1, slide2, slide3 } from "@/assets/images";
 
 const slides = [
@@ -16,7 +16,7 @@ function HomePage() {
             Welcome to CogMart
         </div>
         <div className="max-w-4xl mx-auto py-8">
-            <Carousel slides={slides} />
+            <CarouselComponent slides={slides} />
         </div>
         </>
     )
