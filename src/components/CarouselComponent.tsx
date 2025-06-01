@@ -33,6 +33,7 @@ const CarouselComponent: React.FC<EmblaCarouselProps> = ({ slides }) => {
         {slides.map((src, index) => (
           <div className="flex-[0_0_100%] px-2" key={index}>
             <Image
+              priority
               width={700}
               height={700}
               src={src}

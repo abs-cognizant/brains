@@ -20,13 +20,13 @@ function ChatComponent() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      message: "Hello, how has your day been? I hope you are doing well.",
+      message: "Hello",
       sender: "user",
     },
     {
       id: 2,
       message:
-        "Hi, I am doing well, thank you for asking. How can I help you today?",
+        "Hello! Welcome! How can I assist you today?",
       sender: "bot",
     },
   ]);

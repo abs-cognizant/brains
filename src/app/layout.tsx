@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/context/AuthContext'; // ✅ Make sure this path is correct
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   title: "Brains 🧠",
   description: "NeuroAI based on a network of AI agents",
   icons: {
-    icon: '/favicon.png', // Path to your PNG icon in the /public directory
+    icon: '/favicon.png',
   },
 };
 
@@ -30,8 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        {/* ✅ Wrap your entire app with the AuthProvider */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
 }
+
+

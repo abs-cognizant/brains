@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from "@/context/AuthContext";
 // import { Label } from '@/components/ui/label';
 
 //nextJS
@@ -35,6 +36,7 @@ const LoginForm: React.FC = () => {
   //const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const { login } = useAuth();
 
   // Initialize React Hook Form
   const form = useForm<LoginFormValues>({
@@ -55,8 +57,10 @@ const LoginForm: React.FC = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network delay
       console.log('Login Data:', data);
+      
       // In a real application, you would send 'data' to your backend for authentication
       // Upon successful login, you might set a user session and navigate to a dashboard
+      login(data);
       router.push('/account');
     } catch (error: unknown) {
       console.error('Login failed:', error);

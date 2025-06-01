@@ -1,4 +1,4 @@
-import { JLHeaderComponent, CarouselComponent, FooterComponent } from "@/components";
+import { HeaderComponent, CarouselComponent, FooterComponent } from "@/components";
 import { slide1, slide2, slide3 } from "@/assets/images";
 
 const slides = [
@@ -11,7 +11,7 @@ const slides = [
 function HomePage() {
   return (
     <>
-      <JLHeaderComponent />
+      <HeaderComponent />
       <main>
         <div className="max-w-4xl mx-auto py-8">
           <CarouselComponent slides={slides} />
