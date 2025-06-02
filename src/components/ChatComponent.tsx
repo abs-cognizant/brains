@@ -168,7 +168,7 @@ function ChatComponent() {
 
   return (
     <div className="flex h-[calc(100vh-185px)]">
-      <div className="flex flex-col h-[calc(100vh-12rem)] mx-auto md:w-2xl">
+      <div className="flex flex-col h-[calc(100vh-20rem)] mx-auto md:w-2xl">
         <ChatMessageList className="flex-1 overflow-auto">
           {messages.map((message, index) => {
             const variant = message.sender === "user" ? "sent" : "received";
