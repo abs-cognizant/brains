@@ -176,8 +176,7 @@ function ChatComponent() {
             return (
               <ChatBubble key={message.id} variant={variant}>
                 <ChatBubbleAvatar fallback={variant === "sent" ? "JD" : "AI"} />
-                <ChatBubbleMessage>
-                  {/* {message.message} */}
+                {/* <ChatBubbleMessage>
                   {message.message ||
                     (isStreaming && message.sender === "bot" && (
                       <span className="animate-pulse text-muted-foreground">
@@ -188,6 +187,18 @@ function ChatComponent() {
                         </span>
                       </span>
                     ))}
+                </ChatBubbleMessage> */}
+                <ChatBubbleMessage>
+                  {message.message}
+                  {message.sender === "bot" &&
+                    isStreaming &&
+                    index === messages.length - 1 && ( // only on the last message
+                      <span className="ml-1 inline-flex space-x-1 align-middle">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0s]" />
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                      </span>
+                    )}
                 </ChatBubbleMessage>
                 <ChatBubbleActionWrapper>
                   {actionIcons.map(({ icon: Icon, label }) => (
