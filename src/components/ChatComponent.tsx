@@ -25,8 +25,7 @@ function ChatComponent() {
     },
     {
       id: 2,
-      message:
-        "Hello! Welcome! How can I assist you today?",
+      message: "Hello! Welcome! How can I assist you today?",
       sender: "bot",
     },
   ]);
@@ -139,7 +138,9 @@ function ChatComponent() {
 
         try {
           const parsedRaw = JSON.parse(messageData);
-          const parsedArray = Array.isArray(parsedRaw) ? parsedRaw : [parsedRaw];
+          const parsedArray = Array.isArray(parsedRaw)
+            ? parsedRaw
+            : [parsedRaw];
 
           const contentChunk = parsedArray.find(
             (chunk: AIMessageChunk) => chunk.type === "AIMessageChunk"
@@ -175,7 +176,19 @@ function ChatComponent() {
             return (
               <ChatBubble key={message.id} variant={variant}>
                 <ChatBubbleAvatar fallback={variant === "sent" ? "JD" : "AI"} />
-                <ChatBubbleMessage>{message.message}</ChatBubbleMessage>
+                <ChatBubbleMessage>
+                  {/* {message.message} */}
+                  {message.message ||
+                    (isStreaming && message.sender === "bot" && (
+                      <span className="animate-pulse text-muted-foreground">
+                        <span className="flex space-x-1">
+                          <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0s]" />
+                          <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                          <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                        </span>
+                      </span>
+                    ))}
+                </ChatBubbleMessage>
                 <ChatBubbleActionWrapper>
                   {actionIcons.map(({ icon: Icon, label }) => (
                     <ChatBubbleAction
