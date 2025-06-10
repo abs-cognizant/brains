@@ -2,13 +2,35 @@
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+    
+  const CHATBOT_API_KEY = process.env.CHATBOT_API_KEY;
+  const NEXT_PUBLIC_CHATBOT_ENDPOINT_URL = process.env.NEXT_PUBLIC_CHATBOT_ENDPOINT_URL;
+
+  // Add a check for undefined in development or build phase (optional but good for debugging)
+  if (!CHATBOT_API_KEY) {
+    console.error("CHATBOT_API_KEY is not defined.");
+    return new Response(JSON.stringify({ error: "Server configuration error: API key missing" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Add a check for undefined in development or build phase (optional but good for debugging)
+  if (!NEXT_PUBLIC_CHATBOT_ENDPOINT_URL) {
+    console.error("NEXT_PUBLIC_CHATBOT_ENDPOINT_URL is not defined.");
+    return new Response(JSON.stringify({ error: "Server configuration error: NEXT_PUBLIC_CHATBOT_ENDPOINT_URL key missing" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const { prompt, thread_id } = await req.json();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_ENDPOINT_URL}/${thread_id}/runs/stream`, {
+  const response = await fetch(`${NEXT_PUBLIC_CHATBOT_ENDPOINT_URL}/${thread_id}/runs/stream`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": "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",
+      "X-API-Key": CHATBOT_API_KEY,
     },
     body: JSON.stringify({
       assistant_id: "8a4ac7a4-50eb-5206-98cc-4a72345cb1f7",
