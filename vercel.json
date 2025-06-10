@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/:path((?!_next|static).*)",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
+}
