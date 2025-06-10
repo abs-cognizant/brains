@@ -198,8 +198,17 @@ export default function HeaderComponent() {
             onMouseEnter={() => setHoveredCategory(cat.name)}
             onMouseLeave={() => setHoveredCategory(null)}
           >
-            <Link
+            {/* <Link
               href={`/${cat.name.toLowerCase().replace(/ & /g, "-")}`}
+              className={`text-base py-4 hover:underline ${
+                cat.name === "Sale & Offers" ? "text-red-600" : ""
+              }`}
+            >
+              {cat.name}
+            </Link> */}
+
+            <Link
+              href={`/`}
               className={`text-base py-4 hover:underline ${
                 cat.name === "Sale & Offers" ? "text-red-600" : ""
               }`}
@@ -212,13 +221,18 @@ export default function HeaderComponent() {
                 <h3 className="text-base mb-4">{cat.name}</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {cat.links.map((sub) => (
+                    // <Link
+                    //   key={sub}
+                    //   href={`/${cat.name
+                    //     .toLowerCase()
+                    //     .replace(/ & /g, "-")}/${sub
+                    //     .toLowerCase()
+                    //     .replace(/ /g, "-")}`}
+                    //   className="hover:underline text-sm"
+                    // >
                     <Link
                       key={sub}
-                      href={`/${cat.name
-                        .toLowerCase()
-                        .replace(/ & /g, "-")}/${sub
-                        .toLowerCase()
-                        .replace(/ /g, "-")}`}
+                      href={`/`}
                       className="hover:underline text-sm"
                     >
                       {sub}
