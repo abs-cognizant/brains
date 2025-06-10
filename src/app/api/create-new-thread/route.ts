@@ -1,7 +1,7 @@
 export const runtime = "edge";
 
 export async function POST() {
-  const res = await fetch(`${process.env.CHATBOT_ENDPOINT_URL}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_ENDPOINT_URL}`, {
     method: "POST",
     headers: {
       "X-API-Key": "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",

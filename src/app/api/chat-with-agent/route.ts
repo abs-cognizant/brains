@@ -4,7 +4,7 @@ export const runtime = "edge";
 export async function POST(req: Request) {
   const { prompt, thread_id } = await req.json();
 
-  const response = await fetch(`${process.env.CHATBOT_ENDPOINT_URL}/${thread_id}/runs/stream`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_CHATBOT_ENDPOINT_URL}/${thread_id}/runs/stream`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
