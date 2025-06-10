@@ -174,7 +174,7 @@ function ChatComponent() {
             const variant = message.sender === "user" ? "sent" : "received";
             return (
               <ChatBubble key={message.id} variant={variant}>
-                <ChatBubbleAvatar fallback={variant === "sent" ? "US" : "AI"} />
+                <ChatBubbleAvatar fallback={variant === "sent" ? "JD" : "AI"} />
                 <ChatBubbleMessage>{message.message}</ChatBubbleMessage>
                 <ChatBubbleActionWrapper>
                   {actionIcons.map(({ icon: Icon, label }) => (
